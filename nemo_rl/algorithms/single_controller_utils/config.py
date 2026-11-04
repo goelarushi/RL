@@ -493,6 +493,19 @@ class WatchdogConfig(BaseModel, extra="allow"):
         return self
 
 
+class TrainerWarmupConfig(BaseModel, extra="allow"):
+    """Synthetic first training pass, run while the trainer waits for generation."""
+
+    # Run one synthetic logprob pass and forward/backward on a Megatron trainer while
+    # it waits for generation or the first rollouts, so the first step's compiles and
+    # autotuning happen there. Needs non-colocated generation; setups it does not
+    # cover, such as PPO, router replay or CUDA graphs, skip it and log why.
+    enabled: bool = False
+    # Lengths of the synthetic sequences, each in [2, policy.max_total_sequence_length].
+    # None fills two microbatches near the microbatch token budget.
+    seqlens: Optional[list[int]] = None
+
+
 class AsyncRLConfig(BaseModel, extra="allow"):
     # Stream every consumed sample's untruncated token tensors to JSONL. Files
     # are published only after the optimizer step completes; disabled by default.
@@ -559,6 +572,9 @@ class AsyncRLConfig(BaseModel, extra="allow"):
     # gpus_per_node x (segment + buffer). With storage units on
     # (storage_unit_segment_size > 0) the segment is 0; only the buffer remains.
     num_advantage_workers: NonNegativeInt = 0
+    # Synthetic first training pass that overlaps the trainer's first compiles with
+    # generation start-up.
+    trainer_warmup: TrainerWarmupConfig = Field(default_factory=TrainerWarmupConfig)
 
     @model_validator(mode="after")
     def _reject_renamed_blocks(self) -> "AsyncRLConfig":

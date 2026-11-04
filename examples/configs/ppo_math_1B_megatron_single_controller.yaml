@@ -69,6 +69,11 @@ async_rl:
   # later step boundary so the disk write overlaps training. The overlap is shorter
   # here than for GRPO: the critic handoff blocks on the finalize once per chunk.
   defer_async_checkpoint_finalize: false
+  # Synthetic first training pass on a Megatron trainer. PPO steps are not covered,
+  # so setup skips it and logs why.
+  trainer_warmup:
+    enabled: false
+    seqlens: null
 
   # ── Resiliency ─────────────────────────────────────────────────────────────
   # What happens to a prompt whose rollout fails. Infrastructure failures are
