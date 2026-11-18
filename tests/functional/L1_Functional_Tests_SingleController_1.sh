@@ -41,6 +41,8 @@ run_test fast uv run --no-sync bash ./tests/functional/grpo_dp_single_controller
 run_test fast uv run --no-sync bash ./tests/functional/ppo_async_single_controller.sh
 run_test fast uv run --no-sync bash ./tests/functional/ppo_async_single_controller_streaming.sh
 run_test fast uv run --no-sync bash ./tests/functional/grpo_async_gym_single_controller.sh
+run_test fast uv run --no-sync bash ./tests/functional/gdpo_single_controller.sh
+run_test fast uv run --no-sync bash ./tests/functional/gdpo_gym_single_controller.sh
 
 cd ${PROJECT_ROOT}/tests
 if compgen -G ".coverage*" > /dev/null; then
