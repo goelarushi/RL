@@ -18,7 +18,7 @@ import copy
 import json
 from typing import Any
 
-from nemo_rl.environments.nemo_gym_task import get_nemo_gym_task_input
+from nemo_rl.environments.nemo_gym_task import get_nemo_gym_responses_create_params
 
 
 def _json_mapping(value: Any, *, field_name: str) -> dict[str, Any]:
@@ -71,9 +71,9 @@ def _metadata_extra_body(nemo_gym_example: dict[str, Any]) -> dict[str, Any]:
         TypeError: If request parameters or metadata are not dictionaries.
         ValueError: If ``extra_body`` contains invalid JSON.
     """
-    params = get_nemo_gym_task_input(nemo_gym_example).get(
-        "responses_create_params", {}
-    )
+    params = get_nemo_gym_responses_create_params(nemo_gym_example)
+    if params is None:
+        params = {}
     if not isinstance(params, dict):
         raise TypeError("responses_create_params must be a dict")
     metadata = params.get("metadata", {})
@@ -106,9 +106,9 @@ def _chat_template_kwargs_for_processor(
         TypeError: If request metadata has an unsupported type.
         ValueError: If a JSON metadata value is empty or invalid.
     """
-    params = get_nemo_gym_task_input(nemo_gym_example).get(
-        "responses_create_params", {}
-    )
+    params = get_nemo_gym_responses_create_params(nemo_gym_example)
+    if params is None:
+        params = {}
     if not isinstance(params, dict):
         raise TypeError("responses_create_params must be a dict")
     metadata = params.get("metadata", {})

@@ -100,7 +100,7 @@ from nemo_rl.environments.nemo_gym_shards import (
 )
 from nemo_rl.environments.nemo_gym_task import (
     get_nemo_gym_attribution_key,
-    get_nemo_gym_task_input,
+    get_nemo_gym_responses_create_params,
     is_nemo_gym_task,
 )
 from nemo_rl.environments.nemotron_utils import (
@@ -2449,10 +2449,8 @@ Depending on your data shape, you may want to change these values."""
         processor = getattr(self, "_processor", None)
         response = nemo_gym_result["response"]
         result_input = nemo_gym_result["responses_create_params"].get("input", [])
-        request_input = (
-            get_nemo_gym_task_input(nemo_gym_row)
-            .get("responses_create_params", {})
-            .get("input")
+        request_input = (get_nemo_gym_responses_create_params(nemo_gym_row) or {}).get(
+            "input"
         )
         raw_input = (
             request_input

@@ -68,7 +68,7 @@ from nemo_rl.environments.nemo_gym import (
 )
 from nemo_rl.environments.nemo_gym_task import (
     get_nemo_gym_attribution_key,
-    get_nemo_gym_task_input,
+    get_nemo_gym_responses_create_params,
     is_nemo_gym_task,
 )
 from nemo_rl.environments.nemotron_utils import (
@@ -180,10 +180,8 @@ def attach_initial_nemo_gym_image_payloads(
         if extra_env_info is None or not isinstance(extra_env_info, dict):
             continue
         initial_messages = (
-            get_nemo_gym_task_input(extra_env_info)
-            .get("responses_create_params", {})
-            .get("input", [])
-        )
+            get_nemo_gym_responses_create_params(extra_env_info) or {}
+        ).get("input", [])
         # Load images from Responses-API input messages in encounter order.
         images = [
             resolve_to_image(source)

@@ -59,3 +59,35 @@ def get_nemo_gym_task_input(row: dict[str, Any]) -> dict[str, Any]:
     if not isinstance(task_input, dict):
         raise TypeError("NeMo-Gym materialized task_input must be a dict")
     return task_input
+
+
+def get_nemo_gym_responses_create_params(
+    row: dict[str, Any], *, create: bool = False
+) -> Any:
+    """Return the row's own Responses parameters, so callers may update them in place.
+
+    The parameters are the task input's ``responses_create_params``, or, for a
+    materialized task whose single step Gym writes as ``task_input.turns`` (a
+    Harbor task with one ``[[steps]]`` entry), that turn's
+    ``responses_create_params``. A task with several turns is not resolved here.
+
+    Args:
+        row: A flat Gym row or a materialized task row.
+        create: Insert an empty mapping where the parameters belong when they are
+            absent, as ``dict.setdefault`` does.
+
+    Returns:
+        The parameters as stored (normally a dict), or ``None`` when absent and
+        ``create`` is false, or when the task has more than one turn.
+    """
+    task_input = get_nemo_gym_task_input(row)
+    holder: dict[str, Any] = task_input
+    if "responses_create_params" not in task_input:
+        turns = task_input.get("turns")
+        if isinstance(turns, list) and turns:
+            if len(turns) != 1 or not isinstance(turns[0], dict):
+                return None
+            holder = turns[0]
+    if create:
+        return holder.setdefault("responses_create_params", {})
+    return holder.get("responses_create_params")

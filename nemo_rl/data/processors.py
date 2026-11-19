@@ -34,7 +34,7 @@ from nemo_rl.data.interfaces import (
 )
 from nemo_rl.data.llm_message_utils import get_formatted_message_log
 from nemo_rl.data.multimodal_utils import VIDEO_CONTENT_TYPES
-from nemo_rl.environments.nemo_gym_task import get_nemo_gym_task_input
+from nemo_rl.environments.nemo_gym_task import get_nemo_gym_responses_create_params
 
 TokenizerType = PreTrainedTokenizerBase
 
@@ -907,7 +907,7 @@ def multichoice_qa_processor(
 
 def _gym_row_has_video_media(extra_env_info: dict[str, Any]) -> bool:
     """Return whether a Gym row carries cached frames or native video media."""
-    params = get_nemo_gym_task_input(extra_env_info).get("responses_create_params")
+    params = get_nemo_gym_responses_create_params(extra_env_info)
     if not isinstance(params, dict):
         return False
     messages = params.get("input")
